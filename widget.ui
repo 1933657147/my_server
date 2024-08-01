@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Widget</class>
+ <widget class="QWidget" name="Widget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>963</width>
+    <height>523</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>串口服务器</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="res.qrc">
+    <normaloff>:/images/chuankoufuwuqi.png</normaloff>:/images/chuankoufuwuqi.png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="tabPosition">
+      <enum>QTabWidget::South</enum>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="baseTab">
+      <attribute name="title">
+       <string>基础信息</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="0" column="0">
+        <widget class="QWidget" name="homeWidget" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>921</width>
+           <height>371</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="logsTab">
+      <attribute name="title">
+       <string>日志管理</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
+        <widget class="logsmanager" name="logsWidget" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="workTab">
+      <attribute name="title">
+       <string>模式管理</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="workmodemanager" name="workModeWidget" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="serialTab">
+      <attribute name="title">
+       <string>串口管理</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="uartmanager" name="uralWideget" native="true"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="usersTab">
+      <attribute name="title">
+       <string>用户管理</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="usersmanager" name="userWidget" native="true"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>usersmanager</class>
+   <extends>QWidget</extends>
+   <header location="global">usersmanager.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>uartmanager</class>
+   <extends>QWidget</extends>
+   <header location="global">uartmanager.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>workmodemanager</class>
+   <extends>QWidget</extends>
+   <header location="global">workmodemanager.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>logsmanager</class>
+   <extends>QWidget</extends>
+   <header location="global">logsmanager.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

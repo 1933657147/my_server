@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/bei1.jpg</file>
+        <file>images/bei2.png</file>
+        <file>images/chuankou.png</file>
+        <file>images/chuankou_28.png</file>
+        <file>images/chuankoufuwuqi.png</file>
+        <file>images/close.png</file>
+        <file>images/exit.png</file>
+        <file>images/gongzuomoshi.png</file>
+        <file>images/homel.jpg</file>
+        <file>images/lgin.png</file>
+        <file>images/login.png</file>
+        <file>images/mimayincang.png</file>
+        <file>images/mingwen.png</file>
+        <file>images/model.png</file>
+        <file>images/note.png</file>
+        <file>images/odbc-full.png</file>
+        <file>images/rizhifuwu.png</file>
+        <file>images/sousuo.png</file>
+        <file>images/user1.png</file>
+        <file>images/wangluo.png</file>
+        <file>images/yonghuguanli.png</file>
+        <file>images/yongyan.png</file>
+        <file>images/zuixiaohua3.png</file>
+        <file>images/切换工作模式.png</file>
+    </qresource>
+</RCC>
