@@ -11,7 +11,7 @@
 #include <QVector>
 
 
-
+//结构体workmodel，表示与工作模式相关的数据
 struct WorkModel {
     int id;
     int protocol;
@@ -28,6 +28,7 @@ struct WorkModel {
     int freetime;
 };
 
+//结构体：表示与串口相关的数据
 struct UartData {
     int port_no;
     int id;

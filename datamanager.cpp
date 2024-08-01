@@ -1,8 +1,8 @@
 #include "datamanager.h"
 #include "widget.h"
 
-QVector<WorkModel> workv;
-QVector<UartData> uartv;
+QVector<WorkModel> workv;//结构体数组，用于存储从数据库表中查询到的所有记录。每个 WorkModel 对象包含了表中的一行数据。
+QVector<UartData> uartv;//用于存储从数据库表中查询到的所有记录。每个 UartData 对象包含了表中的一行数据。
 
 dataManager::dataManager(QWidget *parent) : QWidget(parent)
 {
@@ -16,7 +16,9 @@ void dataManager::connect_db()
     db.setPort(3306);
     db.setUserName("root");
     db.setPassword("123456");
-    db.setDatabaseName("serversql"); //指定数据库
+    db.setDatabaseName("serversql"); //指定数据库名称
+
+    //连接数据库，如果成功将信息输入到日志文件，如果失败直接控制台打印错误信息
     if(!db.open()){
         qDebug()<<"数据库失败"<<db.lastError().text();
     }
@@ -24,11 +26,15 @@ void dataManager::connect_db()
         qDebug()<<"数据库链接成功";
         logsmanager::writeLogs(QString("数据库链接成功").toUtf8());
     }
-    workv.clear();
-    uartv.clear();
+    workv.clear();//存放数据之前先清空容器，以便于重新填充
+    uartv.clear();//存放数据之前先清空容器，以便于重新填充
+
+    //创建Sql对象，并且执行SQL查询
     QSqlQuery query;
     query.exec("select * from workmode");
 
+
+    //遍历查询结果，将每一行数据读出并且存储到结构体中
     while (query.next()) {
         // 实例化结构体
         WorkModel w;
@@ -47,16 +53,11 @@ void dataManager::connect_db()
         w.connect = query.value("connect").toString();
         w.disconnect = query.value("disconnect").toString();
         w.freetime = query.value("freetime").toInt();
+
+        //将结构体对象添加到结构体容器中
         workv.push_back(w);
     }
 
-//    qDebug()<<"workv数据如下：";
-//    for(auto wv: workv)
-//    {
-//        qDebug()<<"11111111";
-//        qDebug()<<wv.workmode;
-//        qDebug()<<"11111111";
-//    }
 
     query.exec("select * from serial_port");
 
@@ -79,13 +80,6 @@ void dataManager::connect_db()
         uartv.push_back(u);
     }
 
-//    qDebug()<<"uartv数据如下：";
-//    for(auto wv: uartv)
-//    {
-//        qDebug()<<"11111111";
-//        qDebug()<<wv.com_nm;
-//        qDebug()<<"11111111";
-//    }
 
 }
 

@@ -46,14 +46,18 @@ void workmodemanager::showTables()
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);//不可编辑
 
     QString sql = QString("select * from workmode");
-    query.exec(sql);
+    QSqlQuery query;
+    if(!query.exec(sql)){
+        qWarning()<<"SQL Error"<<query.lastError();
+    }
+
     int len = query.size();
     ui->tableWidget->setRowCount(len);
 
     int i = 0;
     while(query.next()) {
         int j = 0;
-        int id = query.value("id").toInt();
+        //int id = query.value("id").toInt();
         ui->tableWidget->setItem(i, j++, new QTableWidgetItem(query.value("id").toString()));
         ui->tableWidget->setItem(i, j++, new QTableWidgetItem(query.value("workmode").toString()));
         ui->tableWidget->setItem(i, j++, new QTableWidgetItem(query.value("tcp_datamode").toString()));
@@ -82,7 +86,7 @@ void workmodemanager::showTables()
         connect(restartBtn, &QPushButton::clicked, [this]() {
             //this->curr_row = ui->tableWidget->currentRow();
             //qDebug()<<QString("将要重启%1").arg(ui->tableWidget->item(curr_row, 0)->text()).toUtf8();
-            qDebug()<<"111";
+            qDebug()<<"重启按钮被点击";
         });
 
     }
@@ -268,7 +272,7 @@ void workmodemanager::unusedPort_no()
 
 //    }
 
-    //QString port_no_sql = QString("SELECT port_no FROM serial_port ");
+  //QString port_no_sql = QString("SELECT port_no FROM serial_port ");
 
     query.exec(port_no_sql);
     qDebug()<<port_no_sql;

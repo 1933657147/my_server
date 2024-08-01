@@ -7,17 +7,17 @@ logsmanager::logsmanager(QWidget *parent) :
     ui(new Ui::logsmanager)
 {
     ui->setupUi(this);
+    //初始化时读取当前页面日志
     this->readLogs();
+    //设置分页和当前页面
     this->pagesize = 20;
     this->currpage = 1;
+    //显示日志内容
     this->showLogs();
+    //设置界面中每页的日志数
     ui->spinBox->setValue(this->pagesize);
+    //计算总页数
     this->totalpage = ceil(this->logsList.size() / (double)this->pagesize);
-
-//    for(int i=1;i<=this->totalpage;i++)
-//    {
-//        ui->comboBox->addItem(QString("第%1页").arg(i));
-//    }
 
 }
 
@@ -26,8 +26,11 @@ logsmanager::~logsmanager()
     delete ui;
 }
 
+
+//指定加载日志文件的路径
 QFile logsmanager::file("C:\ProgramData\DisplaySessionContainer1.log");
 
+//将日志数据追加到日志文件中，包含时间戳。
 void logsmanager::writeLogs(QByteArray data) {
     if(file.open(QIODevice::Append)) {
         QString logInfo = QString("%1 >> %2\n").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss")).arg(QString(data));
@@ -36,6 +39,7 @@ void logsmanager::writeLogs(QByteArray data) {
     }
 }
 
+//读取日志文件的内容，并且按行分割
 void logsmanager::readLogs() {
     if (this->file.exists() && this->file.open(QIODevice::ReadOnly)) {
         this->logsList = QString::fromUtf8(file.readAll()).split("\n");
@@ -43,7 +47,9 @@ void logsmanager::readLogs() {
     }
 }
 
+//日志显示与分页
 void logsmanager::showLogs() {
+    //清空日志视图并且重新加载当前页的日志
     ui->logView->clear();
 
     if(this->logsList.size() % this->pagesize == 0)
@@ -65,6 +71,7 @@ void logsmanager::showLogs() {
     }
 }
 
+//按钮点击事件：下一页
 void logsmanager::on_nextBtn_clicked()
 {
     if (++this->currpage==this->totalpage)
@@ -79,6 +86,7 @@ void logsmanager::on_nextBtn_clicked()
     this->showLogs();
 }
 
+//按钮点击事件：上一页
 void logsmanager::on_prevBtn_clicked()
 {
     if (--this->currpage==1)
@@ -93,6 +101,7 @@ void logsmanager::on_prevBtn_clicked()
     this->showLogs();
 }
 
+//按钮点击事件：更新日志
 void logsmanager::on_updateBtn_clicked()
 {
     loginManager::loginDeal();
@@ -102,9 +111,11 @@ void logsmanager::on_updateBtn_clicked()
     ui->prevBtn->setDisabled(true);
     ui->nextBtn->setDisabled(false);
     this->readLogs();
-    this->showLogs();}
+    this->showLogs();
+    }
 }
 
+//处理页码选择变化时，上下页按钮的点击
 void logsmanager::on_comboBox_currentIndexChanged(int index)
 {
     if(ui->comboBox->currentText()!=NULL)
@@ -127,6 +138,7 @@ void logsmanager::on_comboBox_currentIndexChanged(int index)
     }
 }
 
+//处理每页日志数变化
 void logsmanager::on_spinBox_valueChanged(int arg1)
 {
     this->pagesize=arg1;
@@ -148,7 +160,7 @@ void logsmanager::on_spinBox_valueChanged(int arg1)
         return;qDebug()<<ui->spinBox->text();
     }
 }
-
+//退出登录
 void logsmanager::on_toolButton_clicked()
 {
     // 弹出一个确认对话框
@@ -156,9 +168,8 @@ void logsmanager::on_toolButton_clicked()
     {
            QMessageBox::StandardButton reply;
            reply = QMessageBox::question(this, "退出登录", "你确定要退出登录吗？",
-                                        QMessageBox::Yes | QMessageBox::No);
+                        QMessageBox::Yes | QMessageBox::No);
 
-           //loginManager::loginDeal();
            if (reply == QMessageBox::Yes)
            {
                loginManager::isLoginFlag = false;

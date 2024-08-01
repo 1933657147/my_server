@@ -5,10 +5,11 @@ usersmanager::usersmanager(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::usersmanager)
 {
+    //初始化界面，设置表格显示样式和上下文菜单
     ui->setupUi(this);
-    ui->rightWidget->setVisible(false);
+    ui->rightWidget->setVisible(false);//隐藏右侧小部件
     ui->tableWidget->setAlternatingRowColors(true);//颜色交替显示
-    this->showTables();
+    this->showTables();//显示表格内容
 
     //鼠标右键
     ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -34,6 +35,7 @@ usersmanager::~usersmanager()
     delete ui;
 }
 
+//从数据库中读取用户信息，并且在表格中显示信息
 void usersmanager::showTables()
 {
     ui->tableWidget->setColumnCount(this->column);
@@ -98,7 +100,7 @@ void usersmanager::on_confirm_clicked()
 
     }
 
-    qDebug()<<sql;
+    //qDebug()<<sql;
     query.exec(this->sql);
 
     ui->rightWidget->setVisible(false);
@@ -183,7 +185,7 @@ void usersmanager::on_toolButton_clicked()
     {
            QMessageBox::StandardButton reply;
            reply = QMessageBox::question(this, "退出登录", "你确定要退出登录吗？",
-                                        QMessageBox::Yes | QMessageBox::No);
+                       QMessageBox::Yes | QMessageBox::No);
 
            //loginManager::loginDeal();
            if (reply == QMessageBox::Yes)

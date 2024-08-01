@@ -7,10 +7,10 @@ uartmanager::uartmanager(QWidget *parent) :
     ui(new Ui::uartmanager)
 {
     ui->setupUi(this);
-    ui->rightWidget->setVisible(false);
+    ui->rightWidget->setVisible(true);//隐藏右侧小部件
     ui->tableWidget->setAlternatingRowColors(true);//颜色交替显示
-    this->showTables();
-    QList<QSerialPortInfo> portList = QSerialPortInfo::availablePorts();
+    this->showTables();//显示表格内容
+    QList<QSerialPortInfo> portList = QSerialPortInfo::availablePorts();//获取串口，并且添加到下拉框
     for(auto port : portList) {
         if(!port.portName().contains("NULL")) {
             ui->com_nmCbB->addItem(port.portName());
@@ -18,7 +18,7 @@ uartmanager::uartmanager(QWidget *parent) :
     }
 
 
-    //鼠标右键
+    //鼠标右键菜单连接相应的槽函数
     ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     this->cMenu = new QMenu;
     QAction *add = this->cMenu->addAction("新增");
@@ -39,6 +39,7 @@ uartmanager::~uartmanager()
 {
     delete ui;
 }
+//显示表格数据
 void uartmanager::showTables() {
 
     ui->tableWidget->setColumnCount(this->column);
@@ -74,6 +75,7 @@ void uartmanager::showTables() {
 //    ui->tableWidget->setColumnHidden(0, true);  //设置隐藏列
 }
 
+//检查用户是否登录，获取当前选择的行，弹出确认对话框询问是否删除所选中的记录，确认后删除数据，并且记录日志
 void uartmanager::on_deleteBtn_clicked()
 {
     loginManager::loginDeal();
@@ -91,27 +93,34 @@ void uartmanager::on_deleteBtn_clicked()
         QString sql = QString("delete from serial_port where id = %1").arg(ui->tableWidget->item(curr_row, 0)->text().toInt());
         QSqlQuery query;
         query.exec(sql);
-    }
+
     logsmanager::writeLogs(QString("删除串口：%1").arg(ui->tableWidget->item(curr_row, 2)->text()).toUtf8());
+    }
     this->showTables();
-    this->curr_row=-1;}
+    this->curr_row=-1;
+    }
 }
 
 
 void uartmanager::on_editBtn_clicked()
 {
     loginManager::loginDeal();
+    //判断是否已经登录
     if(loginManager::isLoginFlag==true){
+    //获取当前选中的行
     this->curr_row = ui->tableWidget->currentRow();
     this->confirm_flag = "修改";
+    //验证选择
     if(this->curr_row<0)
     {
         QMessageBox::critical(this, "操作错误", "请选择要处理的数据！", QMessageBox::Ok);
         return;
     }
+    //设置编辑模式
     ui->rightWidget->setVisible(true);
     ui->editBtn->setDisabled(true);
     ui->idLine->setDisabled(true);
+    //填充编辑数据
     ui->idLine->setText( ui->tableWidget->item(this->curr_row,0)->text());
     ui->port_noSp->setValue(ui->tableWidget->item(this->curr_row, 1)->text().toInt());
     ui->com_noSp->setValue(ui->tableWidget->item(this->curr_row, 2)->text().toInt() );
@@ -127,10 +136,11 @@ void uartmanager::on_editBtn_clicked()
 
 void uartmanager::on_saveBtn_clicked()
 {
+    //获取输入的数据
     int id =ui->idLine->text().toInt();
     int port_no =  ui->port_noSp->value();
     int com_no =  ui->com_noSp->value();
-    QString com_nm =      ui->com_nmCbB->currentText();
+    QString com_nm = ui->com_nmCbB->currentText();
     int baudrate = ui->baudrateCbB->currentText().toInt();
     int databit = ui->databitCbB->currentText().toInt();
     int stopbit = ui->stopbitCbB->currentText().toInt();
@@ -138,25 +148,32 @@ void uartmanager::on_saveBtn_clicked()
     QString flowcontrol =  ui->flowcontrolLe->text();
     int rx_time =  ui->rx_timeSp->text().toInt();
     int tx_time =  ui->tx_timeSp->text().toInt();
+    //处理新增，并且记录日志
     if(this->confirm_flag=="新增"){
         this->sql = QString("insert into serial_port(port_no,com_no,com_nm,baudrate,databit,stopbit,checkbit,flowcontrol,rx_time,tx_time,id) values(%1,%2,'%3',%4,%5,%6,'%7','%8',%9,%10,%11)").arg(port_no).arg(com_no).arg(com_nm).arg(baudrate).arg(databit).arg(stopbit).arg(checkbit).arg(flowcontrol).arg(rx_time).arg(tx_time).arg(id);
         logsmanager::writeLogs(QString("新增串口：%1").arg(ui->tableWidget->item(curr_row, 2)->text()).toUtf8());
     }
+    //处理修改，记录日志
     else if(this->confirm_flag=="修改"){
         this->sql = QString("update serial_port set port_no = %1, com_no= %2, com_nm='%3', baudrate=%4, databit=%5,  stopbit=%6,  checkbit='%7', flowcontrol='%8',  rx_time=%9, tx_time=%10 where id = %11").arg(port_no).arg(com_no).arg(com_nm).arg(baudrate).arg(databit).arg(stopbit).arg(checkbit).arg(flowcontrol).arg(rx_time).arg(tx_time).arg(ui->tableWidget->item(this->curr_row, 0)->text().toInt());
         logsmanager::writeLogs(QString("修改串口：%1 信息").arg(ui->tableWidget->item(curr_row, 2)->text()).toUtf8());
     }
-//    qDebug()<<sql;
+
+    //执行SQL
     query.exec(sql);
+    //更新界面
     this->showTables();
+    //恢复添加和编辑按钮的状态。隐藏编辑窗口
     ui->addBtn->setDisabled(false);
     ui->editBtn->setDisabled(false);
     ui->rightWidget->setVisible(false);
+    //清空编辑控件的内容
     this->clear_info();
 }
 
 void uartmanager::on_addBtn_clicked()
 {
+    //确保用户已经登录，将 this->confirm_flag 设置为 "新增"，禁用“添加”按钮 (ui->addBtn->setDisabled(true)) 并显示编辑窗口 (ui->rightWidget->setVisible(true))，以便用户输入新的数据
     loginManager::loginDeal();
     if(loginManager::isLoginFlag==true){
     this->confirm_flag = "新增";
@@ -166,7 +183,9 @@ void uartmanager::on_addBtn_clicked()
 
 void uartmanager::clear_info()
 {
+    //清空控件内容，将所有控件恢复到初始状态
     ui->idLine->clear();
+    //重置当前行
     ui->port_noSp->setValue(0);
     ui->com_noSp->setValue(0);
     ui->baudrateCbB->setCurrentIndex(0);
@@ -177,32 +196,38 @@ void uartmanager::clear_info()
     ui->rx_timeSp->setValue(0);
     ui->tx_timeSp->setValue(0);
     this->curr_row =-1;
+    //重新启用ID输入框
     ui->idLine->setDisabled(false);
 }
 
 void uartmanager::on_cancelBtn_clicked()
 {
+    //恢复按钮状态：启用添加和编辑按钮
     ui->addBtn->setDisabled(false);
     ui->editBtn->setDisabled(false);
+     //隐藏编辑窗口
     ui->rightWidget->setVisible(false);
+     //清空编辑控件的内容
     this->clear_info();
 }
 
+//右键菜单
 void uartmanager::on_tableWidget_customContextMenuRequested(const QPoint &pos)
 {
+    //显示自定义的右键菜单
     this->cMenu->exec(QCursor::pos());
 }
 
+//退出登录
 void uartmanager::on_toolButton_clicked()
 {
-    // 弹出一个确认对话框
+    // 弹出一个确认对话框，确保用户已经登录
     if(loginManager::isLoginFlag == true)
     {
            QMessageBox::StandardButton reply;
            reply = QMessageBox::question(this, "退出登录", "你确定要退出登录吗？",
-                                        QMessageBox::Yes | QMessageBox::No);
-
-           //loginManager::loginDeal();
+               QMessageBox::Yes | QMessageBox::No);
+            //更新登录状态==将标志位设置为false表示已经退出登录
            if (reply == QMessageBox::Yes)
            {
                loginManager::isLoginFlag = false;

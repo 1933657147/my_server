@@ -18,7 +18,7 @@ mytcpclient::mytcpclient(QObject *parent) : QObject(parent)
 }
 
 
-
+//初始化串口
 void mytcpclient::startUartConfig()
 {
     for(int i=0;i<serialPortMap.size();i++ )
@@ -101,33 +101,6 @@ void mytcpclient::startUartConfig()
 
 }
 }
-
-////初始化的数据
-//void mytcpclient::showData()
-//{
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

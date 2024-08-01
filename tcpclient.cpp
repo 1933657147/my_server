@@ -79,6 +79,7 @@ void TcpClient::ClientMode(QSerialPort *serialPort,QString host,int port)
             count=0;
         }
         //this->freetime->stop();
+
     });
 
 }
